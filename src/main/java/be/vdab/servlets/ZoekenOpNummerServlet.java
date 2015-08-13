@@ -9,13 +9,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import be.vdab.dao.ArtikelDAO;
+import be.vdab.services.ArtikelService;
 
 @WebServlet("/artikels/zoekenopnummer.htm")
 public class ZoekenOpNummerServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final String VIEW = "/WEB-INF/JSP/artikels/zoekenopnummer.jsp";
-	private final transient ArtikelDAO artikelDAO = new ArtikelDAO();
+	private final transient ArtikelService artikelDAO = new ArtikelService();
        
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
