@@ -1,16 +1,29 @@
 package be.vdab.dao;
 
-import javax.persistence.EntityManager;
+import java.math.BigDecimal;
+import java.util.List;
 
 import be.vdab.entities.Artikel;
 
-public class ArtikelDAO {
-	public Artikel read(long id, EntityManager entityManager) {
-			return entityManager.find(Artikel.class, id);
+public class ArtikelDAO extends AbstractDAO {
+	public Artikel read(long id) {
+			return getEntityManager().find(Artikel.class, id);
 	}
 	
-	public void create(Artikel artikel, EntityManager entityManager) {
-		entityManager.persist(artikel);
+	public void create(Artikel artikel) {
+		getEntityManager().persist(artikel);
+		}
+	
+	public List<Artikel> findByNaamContains(String woord) {
+		return getEntityManager()
+		.createNamedQuery("Artikel.findByNaamContains", Artikel.class)
+		.setParameter("zoals", '%' + woord + '%').getResultList();
+		}
+	
+	public void prijsverhoging(BigDecimal factor) {
+		getEntityManager().createNamedQuery("Artikel.prijsverhoging")
+		.setParameter("factor", factor)
+		.executeUpdate();
 		}
 
 }
