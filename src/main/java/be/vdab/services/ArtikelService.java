@@ -23,12 +23,20 @@ public class ArtikelService {
 	public List<Artikel> findByNaamContains(String woord) {
 		return artikelDAO.findByNaamContains(woord);
 	}
-	
+
 	public void prijsverhoging(BigDecimal percentage) {
-		BigDecimal factor
-		= BigDecimal.ONE.add(percentage.divide(BigDecimal.valueOf(100)));
+		BigDecimal factor = BigDecimal.ONE.add(percentage.divide(BigDecimal
+				.valueOf(100)));
 		artikelDAO.beginTransaction();
 		artikelDAO.prijsverhoging(factor);
 		artikelDAO.commit();
-		}
+	}
+
+	public List<Artikel> findAll() {
+		return artikelDAO.findAll();
+	}
+
+	public List<Artikel> findAllMetArtikelgroep() {
+		return artikelDAO.findAllMetArtikelGroep();
+	}
 }

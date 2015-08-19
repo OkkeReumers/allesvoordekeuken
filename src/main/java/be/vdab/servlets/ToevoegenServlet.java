@@ -12,9 +12,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import be.vdab.entities.Artikel;
+import be.vdab.entities.Artikelgroep;
 import be.vdab.entities.FoodArtikel;
 import be.vdab.entities.NonFoodArtikel;
 import be.vdab.services.ArtikelService;
+import be.vdab.services.ArtikelgroepService;
 
 // enkele imports ...
 @WebServlet("/artikels/toevoegen.htm")
@@ -23,10 +25,12 @@ public class ToevoegenServlet extends HttpServlet {
 	private static final String VIEW = "/WEB-INF/JSP/artikels/toevoegen.jsp";
 	private static final String REDIRECT_URL = "%s/artikels/zoekenopnummer.htm?id=%d";
 	private final transient ArtikelService artikelService = new ArtikelService();
+	private final transient ArtikelgroepService artikelgroepService = new ArtikelgroepService();
 
 	@Override
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
+		request.setAttribute("artikelgroepen", artikelgroepService.findAll());
 		request.getRequestDispatcher(VIEW).forward(request, response);
 	}
 
@@ -89,6 +93,10 @@ public class ToevoegenServlet extends HttpServlet {
 				fouten.put("soort", "maak een keuze");
 			}
 		}
+		String artikelgroepId = request.getParameter("artikelgroepid");
+		if (artikelgroepId == null) {
+			fouten.put("artikelgroepid", "verplicht");
+		}
 		if (fouten.isEmpty()) {
 			if (!Artikel.isAankoopprijsVerkoopprijsValid(aankoopprijs,
 					verkoopprijs)) {
@@ -96,12 +104,14 @@ public class ToevoegenServlet extends HttpServlet {
 						"moet groter zijn of gelijk aan de aankoopprijs");
 			} else {
 				Artikel artikel;
+				Artikelgroep artikelgroep = artikelgroepService.read(Long
+						.parseLong(artikelgroepId));
 				if ("F".equals(soort)) {
 					artikel = new FoodArtikel(naam, aankoopprijs, verkoopprijs,
-							houdbaarheid);
+							houdbaarheid, artikelgroep);
 				} else {
 					artikel = new NonFoodArtikel(naam, aankoopprijs,
-							verkoopprijs, garantie);
+							verkoopprijs, garantie, artikelgroep);
 				}
 				artikelService.create(artikel);
 				response.sendRedirect(response.encodeRedirectURL(String.format(
